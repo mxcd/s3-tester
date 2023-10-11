@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"time"
 
@@ -89,6 +90,15 @@ func main() {
 					return remove(c)
 				},
 			},
+			{
+				Name:    "url",
+				Aliases: []string{"u"},
+				Usage:   "Generates a pre-signed URL for the specified S3 object",
+				Action: func(c *cli.Context) error {
+					initLogger(c)
+					return sign(c)
+				},
+			},
 		},
 	}
 
@@ -151,6 +161,32 @@ func remove(c *cli.Context) error {
 		log.Fatal().Err(err).Msgf("Failed to remove object '%s'", id)
 	}
 	log.Info().Msgf("Removed object '%s'", id)
+	return nil
+}
+
+func sign(c *cli.Context) error {
+	if c.Args().Len() != 1 {
+		log.Fatal().Msg("Please specify an object sign the URL for")
+	}
+	id := c.Args().First()
+	client := getS3Client(c)
+	S3_BUCKET := c.String("bucket")
+
+	// Set request parameters
+	requestParams := make(url.Values)
+	// requestParams.Set("response-content-disposition", "attachment; filename=\"filename.pdf\"")
+	requestParams.Set("response-content-disposition", "attachment;")
+
+	// Gernerate presigned get object url.
+	presignedURL, err := client.PresignedGetObject(context.Background(), S3_BUCKET, id, time.Duration(1)*time.Minute, requestParams)
+	if err != nil {
+		log.Error().Err(err).Msgf("Failed to generate presigned URL for object '%s'", id)
+		return err
+	}
+
+	log.Info().Msg("Pre-signed URL for object:")
+	log.Info().Msg(presignedURL.String())
+
 	return nil
 }
 
