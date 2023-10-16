@@ -81,8 +81,6 @@ github.com/schollz/progressbar/v3
 # github.com/sirupsen/logrus v1.9.3
 ## explicit; go 1.13
 github.com/sirupsen/logrus
-# github.com/stretchr/testify v1.7.4
-## explicit; go 1.13
 # github.com/urfave/cli/v2 v2.25.7
 ## explicit; go 1.18
 github.com/urfave/cli/v2
