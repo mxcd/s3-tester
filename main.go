@@ -474,15 +474,15 @@ func performance(c *cli.Context) error {
 	t = table.NewWriter()
 	t.SetTitle(fmt.Sprintf("S3 Performance Speeds | %d VUs | %d seconds | %s file size", vus, duration, util.GetStringFromByteSize(byteFileSize)))
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Operation", "min [MB/s]", "max [MB/s]", "P50 [MB/s]", "P90 [MB/s]", "P99 [MB/s]", "Mean [MB/s]", "Std Dev [MB/s]"})
+	t.AppendHeader(table.Row{"Operation", "min [MB/s]", "max [MB/s]", "P50 [MB/s]", "P10 [MB/s]", "P1 [MB/s]", "Mean [MB/s]", "Std Dev [MB/s]"})
 
 	t.AppendRow(table.Row{
 		"Upload Speed",
 		fmt.Sprintf("%.2f", util.GetMinFloat64(uploadSpeeds)/1000000),
 		fmt.Sprintf("%.2f", util.GetMaxFloat64(uploadSpeeds)/1000000),
 		fmt.Sprintf("%.2f", util.GetPercentileFloat64(uploadSpeeds, 50)/1000000),
-		fmt.Sprintf("%.2f", util.GetPercentileFloat64(uploadSpeeds, 90)/1000000),
-		fmt.Sprintf("%.2f", util.GetPercentileFloat64(uploadSpeeds, 99)/1000000),
+		fmt.Sprintf("%.2f", util.GetPercentileFloat64(uploadSpeeds, 10)/1000000),
+		fmt.Sprintf("%.2f", util.GetPercentileFloat64(uploadSpeeds, 1)/1000000),
 		fmt.Sprintf("%.2f", util.GetMean(uploadSpeeds)/1000000),
 		fmt.Sprintf("%.2f", util.GetStdDevFloat64(uploadSpeeds)/1000000),
 	})
