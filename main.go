@@ -492,8 +492,8 @@ func performance(c *cli.Context) error {
 		fmt.Sprintf("%.2f", util.GetMinFloat64(downloadSpeeds)/1000000),
 		fmt.Sprintf("%.2f", util.GetMaxFloat64(downloadSpeeds)/1000000),
 		fmt.Sprintf("%.2f", util.GetPercentileFloat64(downloadSpeeds, 50)/1000000),
-		fmt.Sprintf("%.2f", util.GetPercentileFloat64(downloadSpeeds, 90)/1000000),
-		fmt.Sprintf("%.2f", util.GetPercentileFloat64(downloadSpeeds, 99)/1000000),
+		fmt.Sprintf("%.2f", util.GetPercentileFloat64(downloadSpeeds, 10)/1000000),
+		fmt.Sprintf("%.2f", util.GetPercentileFloat64(downloadSpeeds, 1)/1000000),
 		fmt.Sprintf("%.2f", util.GetMean(downloadSpeeds)/1000000),
 		fmt.Sprintf("%.2f", util.GetStdDevFloat64(downloadSpeeds)/1000000),
 	})
