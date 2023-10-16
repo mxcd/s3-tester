@@ -326,6 +326,7 @@ func performance(c *cli.Context) error {
 	downloadSpeeds := make([]float64, 0)
 	deleteTimes := make([]float64, 0)
 	iterationDelta := 0
+	errorCount := 0
 
 	stop := false
 
@@ -340,6 +341,9 @@ func performance(c *cli.Context) error {
 
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to upload")
+			mutex.Lock()
+			errorCount++
+			mutex.Unlock()
 			return
 		} else {
 			elapsedTime := time.Since(startTime)
@@ -354,6 +358,9 @@ func performance(c *cli.Context) error {
 		s3Object, err := client.GetObject(context.Background(), S3_BUCKET, id, minio.GetObjectOptions{})
 		if err != nil {
 			log.Error().Err(err).Msgf("Failed to init object download '%s'", id)
+			mutex.Lock()
+			errorCount++
+			mutex.Unlock()
 			return
 		}
 
@@ -362,6 +369,9 @@ func performance(c *cli.Context) error {
 
 		if err != nil {
 			log.Error().Err(err).Msgf("Failed to download object '%s'", id)
+			mutex.Lock()
+			errorCount++
+			mutex.Unlock()
 			return
 		} else {
 			elapsedTime := time.Since(startTime)
@@ -375,6 +385,9 @@ func performance(c *cli.Context) error {
 		err = client.RemoveObject(context.Background(), S3_BUCKET, id, minio.RemoveObjectOptions{})
 		if err != nil {
 			log.Error().Err(err).Msgf("Failed to remove object '%s'", id)
+			mutex.Lock()
+			errorCount++
+			mutex.Unlock()
 			return
 		} else {
 			elapsedTime := time.Since(startTime)
@@ -416,6 +429,10 @@ func performance(c *cli.Context) error {
 		mutex.Lock()
 		progress.Add(iterationDelta)
 		iterationDelta = 0
+		if errorCount > 100 {
+			log.Error().Msg("Too many errors. Stopping performance test")
+			break
+		}
 		mutex.Unlock()
 		time.Sleep(1 * time.Second)
 	}
